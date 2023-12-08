@@ -2,6 +2,7 @@ import { AbstractLevel } from 'abstract-level'
 
 import { ActorStore } from './ActorStore.js'
 import { AccountListStore } from './AccountListStore.js'
+import { UserStore } from './UserStore.js'
 
 export { ActorInfoSchema, ActorInfo } from '../../schemas.js'
 
@@ -12,6 +13,7 @@ export default class Store {
   blocklist: AccountListStore
   allowlist: AccountListStore
   admins: AccountListStore
+  users: UserStore
 
   // TODO: Have store config which just needs the specific fields for the store
   constructor (db: AbstractLevel<any, string, any>) {
@@ -21,6 +23,16 @@ export default class Store {
     const blocklistDb = this.db.sublevel('blocklist', {
       valueEncoding: 'json'
     })
+
+    
+    const usersdb = this.db.sublevel('users', {
+      valueEncoding: 'json'
+    }
+    )
+    this.users = new UserStore(usersdb)
+
+    
+
     this.blocklist = new AccountListStore(blocklistDb)
     const allowlistDb = this.db.sublevel('allowlist', {
       valueEncoding: 'json'
