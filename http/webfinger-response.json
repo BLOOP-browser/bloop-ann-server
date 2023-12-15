@@ -1,11 +1,11 @@
 {
-	"subject": "acct:testuser@ap-server.com",
+	"subject": "acct:wormhole@mccd.space",
 
 	"links": [
 		{
 			"rel": "self",
 			"type": "application/activity+json",
-			"href": "https://ap-server.com/@testuser"
+			"href": "https://mccd.space/@wormhole"
 		}
 	]
 }

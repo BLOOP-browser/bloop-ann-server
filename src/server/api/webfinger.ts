@@ -1,10 +1,12 @@
 import { APIConfig, FastifyTypebox } from '.'
 import { Type } from '@sinclair/typebox'
 
-import Store from '../store/index'
+import Store, { ActorInfo } from '../store/index'
 import ActivityPubSystem from '../apsystem'
 
 import fetch from 'node-fetch'
+import { ActorStore } from '../store/ActorStore'
+import { hostname } from 'os'
 
 interface WebfingerResponse {
     subject: string;
@@ -21,7 +23,7 @@ export const webfingerRoutes = (cfg: APIConfig, store: Store, apsystem: Activity
   server.get('/.well-known/webfinger', {
     schema: {
         querystring: Type.Object({
-            resource: Type.String()
+            resource: Type.Optional(Type.String())
         })
         ,
       response: {
@@ -35,7 +37,7 @@ export const webfingerRoutes = (cfg: APIConfig, store: Store, apsystem: Activity
             )
 
         }),
-        401: Type.String()
+        404: Type.String()
       },
       description: 'Retrieve user information via Webfinger',
       tags: ['Webfinger']
@@ -45,45 +47,55 @@ export const webfingerRoutes = (cfg: APIConfig, store: Store, apsystem: Activity
   async (request, reply) => {
     //Splits the query and retrieves the username and server
     const {resource} = request.query
-    const account = resource.split(':')[1]
-    const server = account.split('@')[1]
-
-    if (account === "wormhole@mccd.space"){
-      reply.send("Webfinger succeeded")
-      console.log("wormhole@mccd.space")
+    if (!resource){
+      reply.code(404).send("No resource")
+      return
     }
-    else {
-      reply.code(401).send("user does not exist")
+    console.log(cfg.host)
+    const actorUrl = resource.split(':')[1]
+    const [username, hostname]= actorUrl.split('@')
+    console.log("actorUrl is ", actorUrl)
+    // Attempt to query Store
+
+    const maybeactor = store.actorCache.get(username)
+    console.log("maybeactor is ", maybeactor)
+
+    if (maybeactor){
+      const actorInfo = await maybeactor.getInfo()
+      
+      console.log("actor info is ", actorInfo)
+
+      reply.send(formatResponse(actorInfo, hostname, username))
+
+    } else{
+      reply.code(404).send("user not found")
     }
     
-    // // Attempt to query server
-    //  try {
-    //     const data: WebfingerResponse= await queryWebfinger(resource, server);
-    //     reply.send(data);
-        
-    //   } catch (error) {
-    //     console.error('Error fetching Webfinger data:', error);
-    //     reply.code(500).send('Internal Server Error');
-    //   }
+    
+
+    
+
+     
   })
 
 
 }
 
-
-
-async function queryWebfinger(resource : string, server : string) {
-    const url = `http://${server}/.well-known/webfinger?resource=${resource}}`
+function formatResponse( actorInfo: ActorInfo, hostName : string, username : string){
   
-    try {
-      const response = await fetch(url);
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
-      return response.json() as Promise<WebfingerResponse>
-
-    } catch (error) {
-      console.error('Error fetching Webfinger data:', error);
-      throw error;
-    }
+  return {
+          "subject": `acct:${actorInfo.actorUrl}`,
+        
+          "links": [
+            {
+              "rel": "self",
+              "type": "application/activity+json",
+              "href": `https://${hostName}/users/${username}`
+            }
+          ]
+        }
+      
+  
   }
+
+

@@ -36,14 +36,15 @@ export const registerRoutes = (cfg: APIConfig, store: Store, apsystem: ActivityP
     console.log('user does not exist')
     
     const keypair = generateIdentity()
+    const actorUrl = `${username}@${cfg.host}`
     const info = {
-        actorUrl : `${username}@${cfg.host}`,
+        actorUrl ,
         keypair: keypair,
         publicKeyId: `${cfg.host}/users/${username}#main-key`
     }
     
     await store.users.add(request.body)
-    await store.forActor(username).setInfo(info)
+    await store.forActor(actorUrl).setInfo(info)
     reply.send('user added')
 
 
