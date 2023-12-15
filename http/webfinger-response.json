@@ -1,0 +1,11 @@
+{
+	"subject": "acct:testuser@ap-server.com",
+
+	"links": [
+		{
+			"rel": "self",
+			"type": "application/activity+json",
+			"href": "https://ap-server.com/@testuser"
+		}
+	]
+}

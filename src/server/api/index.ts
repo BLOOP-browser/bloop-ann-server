@@ -29,6 +29,7 @@ import { followerRoutes } from './followers.js'
 import { hookRoutes } from './hooks.js'
 import { registerRoutes } from './application/register.js'
 import { loginRoutes } from './application/login.js'
+import { webfingerRoutes } from './application/webfinger.js'
 
 export const paths = envPaths('distributed-press')
 
@@ -134,6 +135,7 @@ const v1Routes = (cfg: APIConfig, store: Store, apsystem: ActivityPubSystem, hoo
   await server.register(hookRoutes(cfg, store, hookSystem, apsystem))
   await server.register(registerRoutes(cfg, store, apsystem))
   await server.register(loginRoutes(cfg, store,apsystem))
+  await server.register(webfingerRoutes(cfg,store,apsystem))
 
   if (cfg.useSwagger ?? false) {
     server.ready().then(() => {
