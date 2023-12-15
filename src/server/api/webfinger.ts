@@ -1,8 +1,8 @@
-import { APIConfig, FastifyTypebox } from '..'
+import { APIConfig, FastifyTypebox } from '.'
 import { Type } from '@sinclair/typebox'
 
-import Store from '../../store/index'
-import ActivityPubSystem from '../../apsystem'
+import Store from '../store/index'
+import ActivityPubSystem from '../apsystem'
 
 import fetch from 'node-fetch'
 
@@ -48,15 +48,24 @@ export const webfingerRoutes = (cfg: APIConfig, store: Store, apsystem: Activity
     const account = resource.split(':')[1]
     const server = account.split('@')[1]
 
-
-    try {
-        const data: WebfingerResponse= await queryWebfinger(resource, server);
-        reply.send(data);
-      } catch (error) {
-        console.error('Error fetching Webfinger data:', error);
-        reply.code(500).send('Internal Server Error');
-      }
-    })
+    if (account === "wormhole@mccd.space"){
+      reply.send("Webfinger succeeded")
+      console.log("wormhole@mccd.space")
+    }
+    else {
+      reply.code(401).send("user does not exist")
+    }
+    
+    // // Attempt to query server
+    //  try {
+    //     const data: WebfingerResponse= await queryWebfinger(resource, server);
+    //     reply.send(data);
+        
+    //   } catch (error) {
+    //     console.error('Error fetching Webfinger data:', error);
+    //     reply.code(500).send('Internal Server Error');
+    //   }
+  })
 
 
 }

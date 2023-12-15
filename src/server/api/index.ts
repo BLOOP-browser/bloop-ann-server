@@ -29,7 +29,7 @@ import { followerRoutes } from './followers.js'
 import { hookRoutes } from './hooks.js'
 import { registerRoutes } from './application/register.js'
 import { loginRoutes } from './application/login.js'
-import { webfingerRoutes } from './application/webfinger.js'
+import { webfingerRoutes } from './webfinger.js'
 
 export const paths = envPaths('distributed-press')
 
