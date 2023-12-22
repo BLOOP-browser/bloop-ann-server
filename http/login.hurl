@@ -1,6 +1,6 @@
 POST http://localhost:8080/v1/auth/login
 {
-    "email": "joy@getbloop.co",
+    "email": "wormhole@email.com",
     "password": "12345678"
 }
 

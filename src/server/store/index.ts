@@ -44,6 +44,21 @@ export default class Store {
     this.admins = new AccountListStore(adminsDb)
   }
 
+  //TODO: update this!!
+  getActor (domain: string): ActorStore {
+    if (!this.actorCache.has(domain)) {
+      const sub = this.db.sublevel(domain, { valueEncoding: 'json' })
+      const store = new ActorStore(sub)
+      this.actorCache.set(domain, store)
+    }
+
+    const store = this.actorCache.get(domain)
+    if (store == null) {
+      throw new Error('Actor does not exist')
+    }
+    return store
+  }
+
   forActor (domain: string): ActorStore {
     if (!this.actorCache.has(domain)) {
       const sub = this.db.sublevel(domain, { valueEncoding: 'json' })

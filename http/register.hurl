@@ -1,7 +1,7 @@
 POST http://localhost:8080/v1/auth/register
 {
-    "email": "wormhole@email.com",
-    "username": "wormhole",
+    "email": "joy@example2.com",
+    "username": "joy",
     "password": "12345678"
 }
 

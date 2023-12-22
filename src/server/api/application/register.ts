@@ -6,8 +6,11 @@ import Store from '../../store/index'
 import ActivityPubSystem from '../../apsystem'
 import { run } from 'node:test'
 
+
 export const registerRoutes = (cfg: APIConfig, store: Store, apsystem: ActivityPubSystem) => async (server: FastifyTypebox): Promise<void> => {
   // Get global list of admins as newline delimited string
+
+  // TODO: make sure same username cannot be registered twice!!
   server.post('/auth/register', {
     schema: {
       consumes: ['application/json'],

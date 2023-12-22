@@ -51,13 +51,14 @@ export const webfingerRoutes = (cfg: APIConfig, store: Store, apsystem: Activity
       reply.code(404).send("No resource")
       return
     }
-    console.log(cfg.host)
+    console.log("local host is ", cfg.host)
     const actorUrl = resource.split(':')[1]
     const [username, hostname]= actorUrl.split('@')
     console.log("actorUrl is ", actorUrl)
+    console.log("username is ", username)
     // Attempt to query Store
 
-    const maybeactor = store.actorCache.get(username)
+    const maybeactor = store.forActor(actorUrl)
     console.log("maybeactor is ", maybeactor)
 
     if (maybeactor){
